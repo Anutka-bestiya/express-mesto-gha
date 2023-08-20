@@ -1,12 +1,12 @@
 // const path = require("path");
-const Card = require("../models/card"); // данные
+const Card = require('../models/card'); // данные
 const {
   OK_STATUS_CODE,
   HTTP_CREATED_STATUS_CODE,
   HTTP_BAD_REQUEST_STATUS_CODE,
   NOT_FOUND_PAGE_STATUS_CODE,
   SERVER_ERROR_STATUS_CODE,
-} = require("../utils/errors");
+} = require('../utils/errors');
 
 // Получение cards
 const getCards = (req, res) => {
@@ -15,7 +15,7 @@ const getCards = (req, res) => {
     .catch(() => {
       res
         .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "Произошла ошибка на сервере при запросе карточек" });
+        .send({ message: 'Произошла ошибка на сервере при запросе карточек' });
     });
 };
 
@@ -26,19 +26,19 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.status(HTTP_CREATED_STATUS_CODE).send(card))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
-          message: "При создании карточки переданы некорректные данные",
+          message: 'При создании карточки переданы некорректные данные',
         });
       } else {
         res
           .status(SERVER_ERROR_STATUS_CODE)
-          .send({ message: "Произошла ошибка создания карты на сервере" });
+          .send({ message: 'Произошла ошибка создания карты на сервере' });
       }
     });
 };
 
-//удаление card
+// удаление card
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
@@ -46,25 +46,25 @@ const deleteCard = (req, res) => {
       if (!card) {
         res
           .status(NOT_FOUND_PAGE_STATUS_CODE)
-          .send({ message: "Не найдена карточка с таким id" });
+          .send({ message: 'Не найдена карточка с таким id' });
         return;
       }
-      res.status(OK_STATUS_CODE).send("Карточка удалена");
+      res.status(OK_STATUS_CODE).send(card);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
-          message: "При попытке удаления карточки переданы некорректные данные",
+          message: 'При попытке удаления карточки переданы некорректные данные',
         });
       } else {
         res.status(SERVER_ERROR_STATUS_CODE).send({
-          message: "Произошла ошибка на сервере при удалении карточки",
+          message: 'Произошла ошибка на сервере при удалении карточки',
         });
       }
     });
 };
 
-//Поставить лайк на card
+// Поставить лайк на card
 const addLikeCard = (req, res) => {
   const { cardId } = req.params;
   const owner = req.user._id; // _id станет доступен
@@ -73,31 +73,31 @@ const addLikeCard = (req, res) => {
       if (!card) {
         res
           .status(NOT_FOUND_PAGE_STATUS_CODE)
-          .send({ message: "Не найдена карточка с таким id" });
+          .send({ message: 'Не найдена карточка с таким id' });
         return;
       }
       res.status(OK_STATUS_CODE).send(card);
     })
     .catch((err) => {
-      if (err.name === "NotFoundError") {
+      if (err.name === 'NotFoundError') {
         return res
           .status(NOT_FOUND_PAGE_STATUS_CODE)
-          .send({ message: "Не найдена карточка с таким id" });
+          .send({ message: 'Не найдена карточка с таким id' });
       }
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         return res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
           message:
-            "При попытке поставить лайк карточке переданы некорректные данные",
+            'При попытке поставить лайк карточке переданы некорректные данные',
         });
       }
       return res.status(SERVER_ERROR_STATUS_CODE).send({
         message:
-          "Произошла ошибка на сервере при постановке лайка этой карточки",
+          'Произошла ошибка на сервере при постановке лайка этой карточки',
       });
     });
 };
 
-//убрать лайк с card
+// убрать лайк с card
 const deleteLikeCard = (req, res) => {
   const { cardId } = req.params;
   const owner = req.user._id; // _id станет доступен
@@ -106,26 +106,26 @@ const deleteLikeCard = (req, res) => {
       if (!card) {
         res
           .status(NOT_FOUND_PAGE_STATUS_CODE)
-          .send({ message: "Не найдена карточка с таким id" });
+          .send({ message: 'Не найдена карточка с таким id' });
         return;
       }
       res.status(OK_STATUS_CODE).send(card);
     })
     .catch((err) => {
-      if (err.name === "NotFoundError") {
+      if (err.name === 'NotFoundError') {
         return res
           .status(NOT_FOUND_PAGE_STATUS_CODE)
-          .send({ message: "Не найдена карточка с таким id" });
+          .send({ message: 'Не найдена карточка с таким id' });
       }
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         return res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
           message:
-            "При попытке убрать лайк карточки переданы некорректные данные",
+            'При попытке убрать лайк карточки переданы некорректные данные',
         });
       }
       return res
         .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "Произошла ошибка при удалении лайка этой карточки" });
+        .send({ message: 'Произошла ошибка при удалении лайка этой карточки' });
     });
 };
 
