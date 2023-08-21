@@ -57,12 +57,6 @@ const getUserProfile = (req, res) => {
             'При получении данных пользователя были переданы некорректные данные',
         });
       }
-
-      if (err.name === 'NotFoundError') {
-        return res.status(NOT_FOUND_PAGE_STATUS_CODE).send({
-          message: 'Не найден пользователь с таким id',
-        });
-      }
       return res
         .status(SERVER_ERROR_STATUS_CODE)
         .send({
@@ -86,11 +80,6 @@ const updateProfile = (req, res) => {
       res.status(OK_STATUS_CODE).send(user);
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        return res.status(NOT_FOUND_PAGE_STATUS_CODE).send({
-          message: 'Не найден пользователь с таким id',
-        });
-      }
       if (err.name === 'ValidationError') {
         return res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
           message: 'При обновлении данных профиля переданы некорректные данные',
@@ -118,17 +107,11 @@ const updateAvatar = (req, res) => {
       res.status(OK_STATUS_CODE).send(user);
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        return res.status(NOT_FOUND_PAGE_STATUS_CODE).send({
-          message: 'Не найден пользователь с таким id',
-        });
-      }
       if (err.name === 'ValidationError') {
         return res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
           message: 'При обновлении аватара переданы некорректные данные',
         });
       }
-
       return res.status(SERVER_ERROR_STATUS_CODE).send({
         message:
           'Произошла ошибка на сервере при обновлении аватара пользователя',

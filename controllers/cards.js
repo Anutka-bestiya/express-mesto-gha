@@ -79,11 +79,6 @@ const addLikeCard = (req, res) => {
       res.status(OK_STATUS_CODE).send(card);
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        return res
-          .status(NOT_FOUND_PAGE_STATUS_CODE)
-          .send({ message: 'Не найдена карточка с таким id' });
-      }
       if (err.name === 'CastError') {
         return res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
           message:
@@ -112,11 +107,6 @@ const deleteLikeCard = (req, res) => {
       res.status(OK_STATUS_CODE).send(card);
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        return res
-          .status(NOT_FOUND_PAGE_STATUS_CODE)
-          .send({ message: 'Не найдена карточка с таким id' });
-      }
       if (err.name === 'CastError') {
         return res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
           message:
