@@ -151,39 +151,11 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.statics.findUserByCredentials(email, password)
-    .findOne({ email }).select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new UnauthorizedError('Неправильные почта или пароль');
-        // return res.status(HTTP_UNAUTHORIZED_STATUS_CODE).send({
-        //   message: 'Неправильные почта или пароль',
-        // });
-      }
-
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new UnauthorizedError('Неправильные почта или пароль');
-            // return res.status(HTTP_UNAUTHORIZED_STATUS_CODE).send({
-            //   message: 'Неправильные почта или пароль',
-            // });
-          }
-
-          // аутентификация успешна
-          res.send({ message: 'Авторизация прошла успешно!' });
-
-          return user; // теперь user доступен
-        })
-        .catch(() => {
-          throw new UnauthorizedError('Неправильные почта или пароль');
-          // res
-          //   .status(HTTP_UNAUTHORIZED_STATUS_CODE)
-          //   .send({ message: 'Неправильные почта или пароль' });
-        });
-    })
+  // console.log(email, password);
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       // аутентификация успешна! пользователь в переменной user
+      res.send({ message: 'Авторизация прошла успешно!' });
       // создадим токен
       const token = jwt.sign(
         { _id: user._id },
@@ -192,6 +164,7 @@ const login = (req, res, next) => {
       // const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       // вернём токен
       // res.send({ token })
+      // console.log(token);
       res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
@@ -200,13 +173,13 @@ const login = (req, res, next) => {
         })
         .end(); // если у ответа нет тела, можно использовать метод end
     })
-    .catch(() => {
-      // ошибка аутентификации
-      throw new BadRequestError('Ошибка аунтификации');
-      // res
-      //   .status(HTTP_BAD_REQUEST_STATUS_CODE)
-      //   .send({ message: 'Ошибка аунтификации' });
-    })
+    // .catch(() => {
+  // ошибка аутентификации
+  // throw new UnauthorizedError('Неправильные почта или пароль');
+  // res
+  //   .status(HTTP_BAD_REQUEST_STATUS_CODE)
+  //   .send({ message: 'Ошибка аунтификации' });
+    // })
     .catch(next);
 };
 

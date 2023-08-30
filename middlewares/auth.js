@@ -3,7 +3,8 @@ const { HTTP_UNAUTHORIZED_STATUS_CODE } = require('../utils/errors');
 
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
-  const { authorization } = req.cookies.jwt;
+  // const { authorization } = req.cookies.jwt;
+  const { authorization } = '$2a$10$jKRS6LJSrM9s9dLDdvnOtOnExzNmNCmsGsOvUfWZC0Rj0myJhOqLC';
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res

@@ -24,16 +24,18 @@ app.use(routes); // запускаем роутинг
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
-  const { statusCode = 500, message } = err;
-
+  let { statusCode } = err;
+  const { message } = err;
+  // console.log(err);
+  // console.log(statusCode);
+  // console.log(message);
+  if (!statusCode) { statusCode = 500; }
   res
     .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? 'Произошла ошибка на сервере'
-        : message,
-    });
+    .send(
+      // { message: 'Произошла ошибка на сервере' });
+      { message: statusCode !== 500 ? message : 'Произошла ошибка на сервере' },
+    );
 });
 
 mongoose

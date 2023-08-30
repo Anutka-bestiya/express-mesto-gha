@@ -49,8 +49,8 @@ const createCard = (req, res, next) => {
 // удаление card
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  console.log(req.params);
-  const owner = req.user._id; // используем req.user
+  // console.log(req.params);
+  // const owner = req.user._id; // используем req.user
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator'); // библиотека для проверки и валидации данных в Node.js.
+const bcrypt = require('bcryptjs'); // импортируем bcrypt
+const UnauthorizedError = require('../errors/unauthorized-err');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -30,6 +32,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String, // строка
     required: [true, 'Поле "email" должно быть заполнено обязательно'], // оно должно быть у каждого пользователя, так что имя — обязательное поле
+    unique: true,
     validate: {
       validator: (email) => validator.isEmail(email),
       message:
@@ -42,5 +45,24 @@ const userSchema = new mongoose.Schema({
     select: false, // необходимо добавить поле select чтобы API не возвращал хеш пароля
   },
 });
+
+// eslint-disable-next-line func-names
+userSchema.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+          }
+
+          return user; // теперь user доступен
+        });
+    });
+};
 
 module.exports = mongoose.model('user', userSchema);
