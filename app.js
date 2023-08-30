@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 // const path = require("path");
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+require('dotenv').config();
 const routes = require('./routes/router');
 
 const { PORT = 3000 } = process.env;
@@ -12,18 +14,27 @@ const app = express();
 app.use(express.json()); // Парсинг JSON-запросов
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
+app.use(cookieParser()); // подключаем парсер кук как мидлвэр
 
 // app.use(express.static(path.join(__dirname, "public")));
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64e209cf5ba5d80f14c84bae',
-  };
-
-  next();
-});
 
 // Подключение маршрутов приложения
-app.use(routes); // запускаем
+app.use(routes); // запускаем роутинг
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  // если у ошибки нет статуса, выставляем 500
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      // проверяем статус и выставляем сообщение в зависимости от него
+      message: statusCode === 500
+        ? 'Произошла ошибка на сервере'
+        : message,
+    });
+});
 
 mongoose
   .connect('mongodb://127.0.0.1:27017/mestodb')

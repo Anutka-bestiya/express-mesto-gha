@@ -1,5 +1,4 @@
 const routerCards = require('express').Router(); // создали роутер
-// const path = require("path");
 const {
   getCards,
   createCard,
