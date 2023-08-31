@@ -28,34 +28,42 @@ const createUser = (req, res, next) => {
   } = req.body;
   User.findOne({ email })
     .then((user) => {
-      if (!user) {
-        bcrypt.hash(password, 10)
-          .then((hash) => User.create({
-            email,
-            password: hash, // записываем хеш в базу
-            name,
-            about,
-            avatar,
-          }))
-          .then((newUser) => {
-            const { _id } = newUser;
+      if (user) { throw new ConflictError('Пользователь с таким email существует'); } else {
+        bcrypt
+          .hash(password, 10)
+          .then((hash) => {
+            User
+              .create({
+                email,
+                password: hash, // записываем хеш в базу
+                name,
+                about,
+                avatar,
+              })
+              .then((newUser) => {
+                const { _id } = newUser;
 
-            res.status(HTTP_CREATED_STATUS_CODE).send({
-              email,
-              name,
-              about,
-              avatar,
-              _id,
-            });
+                res.status(HTTP_CREATED_STATUS_CODE).send({
+                  email,
+                  name,
+                  about,
+                  avatar,
+                  _id,
+                });
+              })
+              .catch((err) => {
+                if (err.name === 'ValidationError') {
+                  throw new BadRequestError('При создании пользователя переданы некорректные данные');
+                }
+              });
           });
       }
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email существует'));
-      } else if (err.name === 'ValidationError') {
-        next(new BadRequestError('При создании пользователя переданы некорректные данные'));
-      } else { next(err); }
+        throw new ConflictError('Пользователь с таким email существует');
+      }
+      next(err);
     });
 };
 
