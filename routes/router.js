@@ -4,7 +4,7 @@ const auth = require('../middlewares/auth');
 const routerUsers = require('./users');
 const routerCards = require('./cards');
 const routerAuth = require('./auth');
-const { NOT_FOUND_PAGE_STATUS_CODE } = require('../utils/errors');
+const { NOT_FOUND_PAGE_STATUS_CODE } = require('../utils/status_code');
 
 router.use('/users', auth, routerUsers);
 router.use('/', routerAuth);

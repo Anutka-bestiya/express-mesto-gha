@@ -3,7 +3,7 @@ const Card = require('../models/card'); // данные
 const {
   OK_STATUS_CODE,
   HTTP_CREATED_STATUS_CODE,
-} = require('../utils/errors');
+} = require('../utils/status_code');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const UnauthorizedError = require('../errors/unauthorized-err');

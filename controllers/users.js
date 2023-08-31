@@ -8,7 +8,7 @@ const User = require('../models/user'); // данные
 const {
   OK_STATUS_CODE,
   HTTP_CREATED_STATUS_CODE,
-} = require('../utils/errors');
+} = require('../utils/status_code');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict');
@@ -26,20 +26,34 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      email,
-      password: hash, // записываем хеш в базу
-      name,
-      about,
-      avatar,
-    }))
-    .then((user) => res.status(HTTP_CREATED_STATUS_CODE).send(user))
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        bcrypt.hash(password, 10)
+          .then((hash) => User.create({
+            email,
+            password: hash, // записываем хеш в базу
+            name,
+            about,
+            avatar,
+          }))
+          .then((user) => {
+            const { _id } = user;
+
+            res.status(HTTP_CREATED_STATUS_CODE).send({
+              email,
+              name,
+              about,
+              avatar,
+              _id,
+            });
+          });
+      }
+    })
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email существует'));
-      }
-      if (err.name === 'ValidationError') {
+      } else if (err.name === 'ValidationError') {
         next(new BadRequestError('При создании пользователя переданы некорректные данные'));
       } else { next(err); }
     });
