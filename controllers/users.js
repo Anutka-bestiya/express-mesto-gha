@@ -37,8 +37,8 @@ const createUser = (req, res, next) => {
             about,
             avatar,
           }))
-          .then((user) => {
-            const { _id } = user;
+          .then((newUser) => {
+            const { _id } = newUser;
 
             res.status(HTTP_CREATED_STATUS_CODE).send({
               email,
