@@ -5,13 +5,13 @@ const UnauthorizedError = require('../errors/unauthorized-err');
 module.exports = (req, res, next) => {
   // достаём токен
   const token = req.cookies.jwt;
-  function checkToken(token) {
-    if (!token) {
+  function checkToken(anyToken) {
+    if (!anyToken) {
       throw new UnauthorizedError('Токен не получен из куки. Необходима авторизация');
     }
 
     try {
-      return jwt.verify(token, 'dev-secret');
+      return jwt.verify(anyToken, 'dev-secret');
     } catch (err) {
       throw new UnauthorizedError('Токен не прошел верификацию. Необходима авторизация');
     }

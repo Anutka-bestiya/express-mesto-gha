@@ -1,6 +1,6 @@
 const routerUsers = require('express').Router(); // создали роутер
 // const path = require("path");
-const { celebrate, Joi } = require('celebrate');
+// const { celebrate, Joi } = require('celebrate');
 const {
   getUsers,
   getUserProfile,

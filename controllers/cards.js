@@ -47,8 +47,8 @@ const deleteCard = (req, res, next) => {
         throw new UnauthorizedError('Карточку может удалить только ее автор');
       }
       Card.findByIdAndRemove(cardId)
-        .then((card) => {
-          res.status(OK_STATUS_CODE).send(card);
+        .then((cardDel) => {
+          res.status(OK_STATUS_CODE).send(cardDel);
         })
         .catch((err) => {
           if (err.name === 'CastError') {
