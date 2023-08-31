@@ -26,9 +26,9 @@ app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   let { statusCode } = err;
   const { message } = err;
-  // console.log(err);
-  // console.log(statusCode);
-  // console.log(message);
+  console.log(err);
+  console.log(statusCode);
+  console.log(message);
   if (!statusCode) { statusCode = 500; }
   res
     .status(statusCode)
