@@ -1,9 +1,11 @@
 /* eslint-disable no-console */
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 // const path = require("path");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 require('dotenv').config();
 const routes = require('./routes/router');
 
@@ -15,12 +17,17 @@ app.use(express.json()); // Парсинг JSON-запросов
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 app.use(cookieParser()); // подключаем парсер кук как мидлвэр
+app.use(helmet());
 
 // app.use(express.static(path.join(__dirname, "public")));
 
 // Подключение маршрутов приложения
 app.use(routes); // запускаем роутинг
 
+// обработчики ошибок
+app.use(errors()); // обработчик ошибок celebrate
+
+// наш централизованный обработчик
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
@@ -33,7 +40,6 @@ app.use((err, req, res, next) => {
   res
     .status(statusCode)
     .send(
-      // { message: 'Произошла ошибка на сервере' });
       { message: statusCode !== 500 ? message : 'Произошла ошибка на сервере' },
     );
 });

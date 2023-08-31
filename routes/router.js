@@ -1,4 +1,5 @@
 const router = require('express').Router(); // создали роутер
+// const { celebrate, Joi } = require('celebrate');
 const auth = require('../middlewares/auth');
 const routerUsers = require('./users');
 const routerCards = require('./cards');
