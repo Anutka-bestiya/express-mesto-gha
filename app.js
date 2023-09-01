@@ -19,13 +19,13 @@ const limiter = rateLimit({
   max: 100, // можно совершить максимум 100 запросов с одного IP
 });
 
+app.use(helmet());
 // подключаем rate-limiter
 app.use(limiter);
-app.use(express.json()); // Парсинг JSON-запросов
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 app.use(cookieParser()); // подключаем парсер кук как мидлвэр
-app.use(helmet());
+
 
 // app.use(express.static(path.join(__dirname, "public")));
 

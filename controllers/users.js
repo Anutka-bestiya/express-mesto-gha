@@ -21,47 +21,41 @@ const getUsers = (req, res, next) => {
 };
 
 // Создание нового пользователя
-const createUser = (req, res, next) => {
+function createUser(req, res, next) {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  User.findOne({ email })
-    .then(() => {
-      bcrypt
-        .hash(password, 10)
-        .then((hash) => {
-          User
-            .create({
-              email,
-              password: hash, // записываем хеш в базу
-              name,
-              about,
-              avatar,
-            })
-            .then((newUser) => {
-              const { _id } = newUser;
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      User
+        .create({
+          email,
+          password: hash, // записываем хеш в базу
+          name,
+          about,
+          avatar,
+        })
+        .then((newUser) => {
+          const { _id } = newUser;
 
-              res.status(HTTP_CREATED_STATUS_CODE).send({
-                email,
-                name,
-                about,
-                avatar,
-                _id,
-              });
-            })
-            .catch((err) => {
-              if (err.name === 'ValidationError') {
-                next(new BadRequestError('При создании пользователя переданы некорректные данные'));
-              } else { next(err); }
-            });
+          res.status(HTTP_CREATED_STATUS_CODE).send({
+            email,
+            name,
+            about,
+            avatar,
+            _id,
+          });
+        })
+        .catch((err) => {
+          if (err.code === 11000) {
+            next(new ConflictError('Пользователь с таким email существует'));
+          } else if (err.name === 'ValidationError') {
+            next(new BadRequestError('При создании пользователя переданы некорректные данные'));
+          } else { next(err); }
         });
-    })
-    .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email существует'));
-      } else { next(err); }
     });
-};
+}
 
 // Получение персональных данныех пользователя
 const getUserProfile = (req, res, next) => {
