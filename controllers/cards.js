@@ -6,7 +6,7 @@ const {
 } = require('../utils/status_code');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
-const UnauthorizedError = require('../errors/unauthorized-err');
+const ForbiddenError = require('../errors/forbidden-err');
 
 // Получение cards
 const getCards = (req, res, next) => {
@@ -24,9 +24,7 @@ const createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('При создании карточки переданы некорректные данные');
-        // res.status(HTTP_BAD_REQUEST_STATUS_CODE).send({
-      }
-      next(err);
+      } else { next(err); }
     });
 };
 
@@ -44,7 +42,7 @@ const deleteCard = (req, res, next) => {
       const { owner: cardOwner } = card;
 
       if (cardOwner.valueOf() !== someOwner) {
-        throw new UnauthorizedError('Карточку может удалить только ее автор');
+        throw new ForbiddenError('Карточку может удалить только ее автор');
       }
       Card.findByIdAndRemove(cardId)
         .then((cardDel) => {
@@ -73,9 +71,7 @@ const addLikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('При попытке поставить лайк карточке переданы некорректные данные'));
-      } else {
-        next(err);
-      }
+      } else { next(err); }
     });
 };
 

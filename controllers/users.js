@@ -11,8 +11,7 @@ const {
 } = require('../utils/status_code');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
-const ConflictError = require('../errors/conflict');
-// const UnauthorizedError = require('../errors/unauthorized-err');
+const ConflictError = require('../errors/conflict-err');
 
 // Получение пользователей
 const getUsers = (req, res, next) => {
