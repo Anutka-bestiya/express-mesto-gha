@@ -13,7 +13,7 @@ const { LINK_REGEX } = require('../utils/regex');
 routerUsers.get('/', getUsers);
 routerUsers.get('/me', getUserProfile);
 routerUsers.get('/:id', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     id: Joi.string().length(24).hex().required(),
   }),
 }), getByIdProfile);
