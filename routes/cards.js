@@ -17,17 +17,17 @@ routerCards.post('/', celebrate({
   }),
 }), createCard); // POST /cards — создаёт карточку
 routerCards.delete('/:cardId', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),
 }), deleteCard); // DELETE /cards/:cardId — удаляет карточку по идентификатору
 routerCards.put('/:cardId/likes', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),
 }), addLikeCard); // PUT /cards/:cardId/likes — поставить лайк карточке
 routerCards.delete('/:cardId/likes', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),
 }), deleteLikeCard); // DELETE /cards/:cardId/likes — убрать лайк с карточки
