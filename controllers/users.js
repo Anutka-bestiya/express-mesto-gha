@@ -68,8 +68,8 @@ const createUser = (req, res, next) => {
 
 // Получение персональных данныех пользователя
 const getUserProfile = (req, res, next) => {
-  const id = req.user._id; // _id станет доступен
-  User.findById(id)
+  // const id = req.user._id; // _id станет доступен
+  User.findById(req.user._id)
     .then((user) => {
       if (user) { res.status(OK_STATUS_CODE).send(user); }
       throw new NotFoundError('Не найден пользователь с таким id');
@@ -105,8 +105,8 @@ const getByIdProfile = (req, res, next) => {
 // Обновление профиля
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-  const owner = req.user._id; // _id станет доступен
-  User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })
+  // const owner = req.user._id; // _id станет доступен
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Не найден пользователь с таким id');
@@ -125,8 +125,8 @@ const updateProfile = (req, res, next) => {
 // Обновление аватара
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const owner = req.user._id; // _id станет доступен
-  User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
+  // const owner = req.user._id; // _id станет доступен
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Не найден пользователь с таким id');
