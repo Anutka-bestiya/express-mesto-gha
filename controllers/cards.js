@@ -73,9 +73,10 @@ const addLikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('При попытке поставить лайк карточке переданы некорректные данные');
+        next(new BadRequestError('При попытке поставить лайк карточке переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -92,9 +93,10 @@ const deleteLikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('При попытке убрать лайк карточки переданы некорректные данные');
+        next(new BadRequestError('При попытке убрать лайк карточки переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
