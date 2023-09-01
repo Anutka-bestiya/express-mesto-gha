@@ -18,8 +18,8 @@ const getCards = (req, res, next) => {
 // создание card
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  // const owner = req.user._id; // используем req.user
-  Card.create({ name, link, owner: req.user._id })
+  const owner = req.user._id; // используем req.user
+  Card.create({ name, link, owner })
     .then((card) => res.status(HTTP_CREATED_STATUS_CODE).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -31,7 +31,7 @@ const createCard = (req, res, next) => {
 // удаление card
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  // const someOwner = req.user._id; // используем req.user
+  const someOwner = req.user._id; // используем req.user
 
   Card
     .findById(cardId)
@@ -41,7 +41,7 @@ const deleteCard = (req, res, next) => {
       }
       const { owner: cardOwner } = card;
 
-      if (cardOwner.valueOf() !== req.user._id) {
+      if (cardOwner.valueOf() !== someOwner) {
         throw new ForbiddenError('Карточку может удалить только ее автор');
       }
       Card.findByIdAndRemove(cardId)
@@ -60,8 +60,8 @@ const deleteCard = (req, res, next) => {
 // Поставить лайк на card
 const addLikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  // const owner = req.user._id; // _id станет доступен
-  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+  const owner = req.user._id; // _id станет доступен
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: owner } }, { new: true })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Не найдена карточка с таким id');
@@ -78,8 +78,8 @@ const addLikeCard = (req, res, next) => {
 // убрать лайк с card
 const deleteLikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  // const owner = req.user._id; // _id станет доступен
-  Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
+  const owner = req.user._id; // _id станет доступен
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: owner } }, { new: true })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Не найдена карточка с таким id');
