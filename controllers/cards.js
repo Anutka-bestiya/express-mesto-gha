@@ -44,7 +44,7 @@ const deleteCard = (req, res, next) => {
       const { owner: cardOwner } = card;
 
       if (cardOwner.valueOf() !== someOwner) {
-        next(new UnauthorizedError('Карточку может удалить только ее автор'));
+        throw new UnauthorizedError('Карточку может удалить только ее автор');
       }
       Card.findByIdAndRemove(cardId)
         .then((cardDel) => {
