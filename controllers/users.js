@@ -92,7 +92,7 @@ const getByIdProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Не найден пользователь с таким id');
       }
-      res.status(OK_STATUS_CODE).send(user);
+      return res.status(OK_STATUS_CODE).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
