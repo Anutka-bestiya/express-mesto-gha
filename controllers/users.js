@@ -26,43 +26,40 @@ const createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
   User.findOne({ email })
-    .then((user) => {
-      if (user) { throw new ConflictError('Пользователь с таким email существует'); } else {
-        bcrypt
-          .hash(password, 10)
-          .then((hash) => {
-            User
-              .create({
+    .then(() => {
+      bcrypt
+        .hash(password, 10)
+        .then((hash) => {
+          User
+            .create({
+              email,
+              password: hash, // записываем хеш в базу
+              name,
+              about,
+              avatar,
+            })
+            .then((newUser) => {
+              const { _id } = newUser;
+
+              res.status(HTTP_CREATED_STATUS_CODE).send({
                 email,
-                password: hash, // записываем хеш в базу
                 name,
                 about,
                 avatar,
-              })
-              .then((newUser) => {
-                const { _id } = newUser;
-
-                res.status(HTTP_CREATED_STATUS_CODE).send({
-                  email,
-                  name,
-                  about,
-                  avatar,
-                  _id,
-                });
-              })
-              .catch((err) => {
-                if (err.name === 'ValidationError') {
-                  throw new BadRequestError('При создании пользователя переданы некорректные данные');
-                }
+                _id,
               });
-          });
-      }
+            })
+            .catch((err) => {
+              if (err.name === 'ValidationError') {
+                next(new BadRequestError('При создании пользователя переданы некорректные данные'));
+              } else { next(err); }
+            });
+        });
     })
     .catch((err) => {
       if (err.code === 11000) {
-        throw new ConflictError('Пользователь с таким email существует');
-      }
-      next(err);
+        next(new ConflictError('Пользователь с таким email существует'));
+      } else { next(err); }
     });
 };
 
