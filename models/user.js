@@ -1,29 +1,29 @@
 const mongoose = require('mongoose');
-const validator = require('validator'); // библиотека для проверки и валидации данных в Node.js.
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const UnauthorizedError = require('../errors/unauthorized-err');
+const { LINK_REGEX } = require('../utils/regex');
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String, // строка
-    minlength: [2, 'Минимальное количество символов для поля "name" - 2'], // минимальная длина имени — 2 символа
-    maxlength: [
-      30,
-      'Максимальное количество символов для поля "name" - 30'], // а максимальная — 30 символов
+    validate: {
+      validator: ({ length }) => length >= 2 && length <= 30,
+      message: 'Имя пользователя должно быть длиной от 2 до 30 символов',
+    },
     default: 'Жак-Ив Кусто',
   },
   about: {
     type: String, // строка
-    minlength: [2, 'Минимальное количество символов для поля "about" - 2'], // минимальная длина имени — 2 символа
-    maxlength: [
-      30,
-      'Максимальное количество символов для поля "about" - 30'], // а максимальная — 30 символов
+    validate: {
+      validator: ({ length }) => length >= 2 && length <= 30,
+      message: 'О себе должно быть длиной от 2 до 30 символов',
+    },
     default: 'Исследователь',
   },
   avatar: {
     type: String,
     validate: {
-      validator: (url) => validator.isURL(url),
+      validator: (url) => LINK_REGEX.test(url),
       message:
         'Введенный URL адрес некорректный, введите корректный URL',
     },
@@ -31,17 +31,17 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String, // строка
-    required: [true, 'Поле "email" должно быть заполнено обязательно'], // оно должно быть у каждого пользователя, так что имя — обязательное поле
+    required: true, // обязательное поле
     unique: true,
     validate: {
-      validator: (email) => validator.isEmail(email),
+      validator: (email) => /.+@.+\..+/.test(email),
       message:
         'Введенный email некорректный, введите корректный email',
     },
   },
   password: {
     type: String, // строка
-    required: [true, 'Поле "password" должно быть заполнено обязательно'], // оно должно быть у каждого пользователя, так что имя — обязательное поле
+    required: true, // обязательное поле
     select: false, // необходимо добавить поле select чтобы API не возвращал хеш пароля
   },
 });

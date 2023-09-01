@@ -1,21 +1,20 @@
 const mongoose = require('mongoose');
-const validator = require('validator'); // библиотека для проверки и валидации данных в Node.js.
+const { LINK_REGEX } = require('../utils/regex');
 
 const cardSchema = new mongoose.Schema({
   name: {
     type: String, // строка
-    required: [true, 'Поле "name" должно быть заполнено обязательно'], // обязательное поле
-    minlength: [2, 'Минимальное количество символов для поля "name" - 2'], // минимальная длина имени — 2 символа
-    maxlength: [
-      30,
-      'Максимальное количество символов для поля "name" - 30',
-    ], // а максимальная — 30 символов
+    required: true, // обязательное поле
+    validate: {
+      validator: ({ length }) => length >= 2 && length <= 30,
+      message: 'Имя карточки должно быть длиной от 2 до 30 символов',
+    },
   },
   link: {
     required: true,
     type: String,
     validate: {
-      validator: (url) => validator.isURL(url),
+      validator: (url) => LINK_REGEX.test(url),
       message:
         'Введенный URL адрес некорректный, введите корректный URL',
     },
