@@ -44,7 +44,7 @@ const deleteCard = (req, res, next) => {
       const { owner: cardOwner } = card;
 
       if (cardOwner.valueOf() !== someOwner) {
-        throw new UnauthorizedError('Карточку может удалить только ее автор');
+        next(new UnauthorizedError('Карточку может удалить только ее автор'));
       }
       Card.findByIdAndRemove(cardId)
         .then((cardDel) => {
@@ -52,9 +52,8 @@ const deleteCard = (req, res, next) => {
         })
         .catch((err) => {
           if (err.name === 'CastError') {
-            throw new BadRequestError('При попытке удаления карточки переданы некорректные данные');
-          }
-          next(err);
+            next(new BadRequestError('При попытке удаления карточки переданы некорректные данные'));
+          } else { next(err); }
         });
     })
     .catch(next);
