@@ -72,16 +72,15 @@ const getUserProfile = (req, res, next) => {
   const id = req.user._id; // _id станет доступен
   User.findById(id)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Не найден пользователь с таким id');
-      }
-      res.status(OK_STATUS_CODE).send(user);
+      if (user) { res.status(OK_STATUS_CODE).send(user); }
+      throw new NotFoundError('Не найден пользователь с таким id');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('При получении данных пользователя были переданы некорректные данные');
+        next(new BadRequestError('При получении данных пользователя были переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -90,16 +89,17 @@ const getByIdProfile = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Не найден пользователь с таким id');
+      if (user) {
+        res.status(OK_STATUS_CODE).send(user);
       }
-      res.status(OK_STATUS_CODE).send(user);
+      throw new NotFoundError('Не найден пользователь с таким id');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('При получении данных пользователя были переданы некорректные данные');
+        next(new BadRequestError('При получении данных пользователя были переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -116,9 +116,10 @@ const updateProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('При обновлении данных профиля переданы некорректные данные');
+        next(new BadRequestError('При обновлении данных профиля переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -135,9 +136,10 @@ const updateAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('При обновлении аватара переданы некорректные данные');
+        next(new BadRequestError('При обновлении аватара переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
